@@ -18,7 +18,8 @@ def __run_id(fp: str) -> int:
 def main():
     run_id = str(datetime.today().minute) + '_' + str(datetime.today().second)
     archive = 'sim_pipe/files/archives/Andrews_ecoli_0523.omex'
-    root_output_dir = os.path.join(os.getcwd(), 'test_simulation_outputs')
+    project_root = os.getcwd()
+    root_output_dir = os.path.join(project_root, 'test_simulation_outputs')
     output_dir = os.path.join(root_output_dir, run_id)
 
     conf = Config(REPORT_FORMATS=[ReportFormat.csv])
@@ -32,7 +33,9 @@ def main():
     trajectory_title = "Andrews_ecoli"
 
     sim_trajectory = generator.generate_trajectory_object(title=trajectory_title)
-    print(sim_trajectory)
+
+    simularium_fname = os.path.join(project_root, "biosimulators_Andrews_ecoli")
+    generator.convert(sim_trajectory, simularium_fname)
 
 
 if __name__ == "__main__":

@@ -20,7 +20,7 @@ from sim_pipe.data_generators.biosimulators_data_generator import BiosimulatorsD
 
 
 class SmoldynDataGenerator(BiosimulatorsDataGenerator):
-    def __init__(self, archive_fp: str, output_dir: str, config: Optional[Config] = None):
+    def __init__(self, archive_fp: str, output_dir: str, config: Optional[Config] = None, save_conversion: Optional[bool] = True):
         """
         Run a biosimulators smoldyn simulation. Wraps `smoldyn.biosimulators.combine.exec`\n
 
@@ -32,6 +32,7 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
         """
         self.archive_fp = archive_fp
         self.output_dir = output_dir
+        self.save_conversion = save_conversion
         self.config = config or get_config()
         self.config.LOG_PATH = self.output_dir
         self.raw_data = self.get_result()
@@ -60,11 +61,12 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
 
     def generate_trajectory_object(self, title: str, df: Optional[pd.DataFrame] = None) -> TrajectoryData:
         df = df or self.df
+        print(df)
         timestamps = df.pop('Time').values
         agents = df.values
         box_size = 100
         total_steps = 100
-        n_agents = len(agents)
+        n_agents = agents.shape[1]
         type_names = df.columns
         min_radius = 5
         max_radius = 10
@@ -102,4 +104,13 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
             )
         )
 
-    def sa
+    def convert(self, traj_data: TrajectoryData, fname: str) -> None:
+        """
+        :param traj_data:`TrajectoryData` object instance.
+        :param fname:`str`: new simularium filename.
+        :return:`None`
+        """
+        traj = TrajectoryConverter(traj_data)
+        if self.save_conversion:
+            traj.save(fname)
+
