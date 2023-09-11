@@ -5,7 +5,17 @@ import pandas as pd
 import numpy as np
 from smoldyn import biosimulators
 from biosimulators_utils.config import Config, get_config
-from simulariumio.data_objects import TrajectoryData, AgentData, MetaData, CameraData, ModelMetaData
+from simulariumio import (
+    TrajectoryConverter,
+    TrajectoryData,
+    AgentData,
+    UnitData,
+    MetaData,
+    ModelMetaData,
+    CameraData,
+    DisplayData,
+    DISPLAY_TYPE,
+)
 from sim_pipe.data_generators.biosimulators_data_generator import BiosimulatorsDataGenerator
 
 
@@ -72,7 +82,7 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
                     version="1.0",
                     authors="Steve Andrews et al.",
                     description=(
-                        "A Smoldyn example model of the E. coli Min system, which is used to find the cell center during cell division."
+                        "A Biosimulators/Smoldyn example model of the E. coli Min system, which is used to find the cell center during cell division."
                     ),
                     doi="10.1016/j.bpj.2016.02.002",
                     source_code_url="https://github.com/simularium/simulariumio",
@@ -92,3 +102,4 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
             )
         )
 
+    def sa
