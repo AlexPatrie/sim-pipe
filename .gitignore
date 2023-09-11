@@ -1,2 +1,4 @@
 *.pyc
+*.egg-info
+*.DS_Store
 test_simulation_outputs
