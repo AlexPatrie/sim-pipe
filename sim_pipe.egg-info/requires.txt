@@ -1,0 +1,4 @@
+zarr
+biosimulators-utils
+tellurium
+simulariumio[tutorial]
