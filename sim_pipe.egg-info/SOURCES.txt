@@ -1,9 +1,0 @@
-LICENSE.txt
-pyproject.toml
-setup.cfg
-setup.py
-sim_pipe.egg-info/PKG-INFO
-sim_pipe.egg-info/SOURCES.txt
-sim_pipe.egg-info/dependency_links.txt
-sim_pipe.egg-info/requires.txt
-sim_pipe.egg-info/top_level.txt
