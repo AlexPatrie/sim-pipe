@@ -18,11 +18,13 @@ from simulariumio import (
     DisplayData,
     DISPLAY_TYPE,
 )
-from sim_pipe.data_generators.biosimulators_data_generator import BiosimulatorsDataGenerator
 
 
-class SmoldynDataGenerator(BiosimulatorsDataGenerator):
-    def __init__(self, archive_fp: str, output_dir: str, config: Optional[Config] = None, save_conversion: Optional[bool] = True):
+class SmoldynDataGenerator:
+    def __init__(self,
+                 archive_fp: str,
+                 output_dir: str, config: Optional[Config] = None,
+                 save_conversion: Optional[bool] = True):
         """
         Run a biosimulators smoldyn simulation. Wraps `smoldyn.biosimulators.combine.exec`\n
 
@@ -38,7 +40,7 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
         self.config = config or get_config()
         self.config.LOG_PATH = self.output_dir
         self.raw_data = self.get_result()
-        self.df = self.get_result_dataframe()
+        self.df = self.extract_result_dataframe()
 
     def get_result(self) -> Dict:
         results, log = biosimulators.exec_sedml_docs_in_combine_archive(
@@ -52,7 +54,7 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
         data = self.raw_data.get('results')
         return zarr.array(data, chunks=chunks)
 
-    def get_result_dataframe(self) -> pd.DataFrame:
+    def extract_result_dataframe(self) -> pd.DataFrame:
         csv_dir = os.path.join(self.output_dir, "simulation.sedml")
         for f in os.listdir(csv_dir):
             if f.endswith('.csv'):
@@ -67,14 +69,14 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
         agents = df.values
         box_size = 100
         n_seconds = 100
-        #total_steps = 5001
+        # total_steps = 5001
         total_steps = 100
         timestep = n_seconds / total_steps
         '''n_agents = []
         for t in range(total_steps):
             n_agents.append(agents.shape[1])'''
         n_agents = 12
-        #type_names = np.array([df.columns.tolist() for n in range(len(df.columns))])
+        # type_names = np.array([df.columns.tolist() for n in range(len(df.columns))])
         type_names = []
         for t in range(total_steps):
             type_names.append(list(set([df.columns.tolist()[i] for i in range(n_agents)])))
@@ -96,7 +98,10 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
                     version="1.0",
                     authors="Steve Andrews et al.",
                     description=(
-                        "A Biosimulators/Smoldyn example model of the E. coli Min system, which is used to find the cell center during cell division."
+                        """
+                            A Biosimulators/Smoldyn example model of the E. coli Min system, 
+                            which is used to find the cell center during cell division.
+                        """
                     ),
                     doi="10.1016/j.bpj.2016.02.002",
                     source_code_url="https://github.com/simularium/simulariumio",
@@ -146,3 +151,10 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
             os.mkdir(simularium_dirpath)
         return os.path.join(simularium_dirpath, simularium_fname)
 
+    @staticmethod
+    def get_run_id(fp: str) -> str:
+        i = 0
+        files = os.listdir(fp)
+        if str(i) in files:
+            i = int(files[-1]) + 1
+        return str(i)

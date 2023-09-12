@@ -11,7 +11,7 @@ def get_run_id(fp: str) -> str:
     i = 0
     files = os.listdir(fp)
     if str(i) in files:
-         i = int(files[-1]) + 1
+        i = int(files[-1]) + 1
     return str(i)
 
 
@@ -21,7 +21,8 @@ def main():
 
     archive = 'sim_pipe/files/archives/Andrews_ecoli_0523.omex'
     project_root = os.getcwd()
-    root_output_dir = os.path.join(project_root, 'test_simulation_outputs')
+    outputs_dirname = 'test_simulation_outputs'
+    root_output_dir = os.path.join(project_root, outputs_dirname)
     run_id = get_run_id(root_output_dir)
     output_dir = os.path.join(root_output_dir, run_id)
 

@@ -4,3 +4,4 @@
 *.idea
 *.empty
 test_simulation_outputs
+__pycache__
