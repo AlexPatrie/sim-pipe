@@ -16,6 +16,8 @@ def __run_id(fp: str) -> int:
 
 
 def main():
+    if os.path.exists('biosimulators_Andrews_ecoli.simularium'):
+        os.remove('biosimulators_Andrews_ecoli.simularium')
     run_id = str(datetime.today().minute) + '_' + str(datetime.today().second)
     archive = 'sim_pipe/files/archives/Andrews_ecoli_0523.omex'
     project_root = os.getcwd()

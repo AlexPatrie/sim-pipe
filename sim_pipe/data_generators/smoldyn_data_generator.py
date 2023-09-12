@@ -77,10 +77,10 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
         type_names = []
         for t in range(total_steps):
             type_names.append(list(set([df.columns.tolist()[i] for i in range(n_agents)])))
+        print(f'Names: {type_names[0]}')
         min_radius = 5
         max_radius = 10
         sim_display_data = self.generate_display_data(type_names=type_names)
-        print(sim_display_data)
 
         return TrajectoryData(
             meta_data=MetaData(
@@ -114,7 +114,7 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
                 positions=np.random.uniform(size=(total_steps, n_agents, 3)) * box_size - box_size * 0.5,
                 radii=(max_radius - min_radius) * np.random.uniform(size=(total_steps, n_agents)) + min_radius,
                 display_data={
-                    type_names[0][0][0]: DisplayData(
+                    type_names[0][0]: DisplayData(
                         name="Molecule A",
                         display_type=DISPLAY_TYPE.SPHERE,
                     ),
@@ -127,12 +127,11 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
         display_data = {}
         for i in range(len(type_names[0])):
             name = type_names[0][i]
-            for n in name:
-                print(f'the name: {n}')
-                display_data[n] = DisplayData(
-                    name=n,
-                    display_type=DISPLAY_TYPE.SPHERE,
-                )
+            print(f'NAME: {name}')
+            display_data[name] = DisplayData(
+                name=name,
+                display_type=DISPLAY_TYPE.SPHERE_GROUP,
+            )
         return display_data
 
     def convert(self, traj_data: TrajectoryData, fname: str) -> None:
@@ -142,6 +141,6 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
         :return:`None`
         """
         traj = TrajectoryConverter(traj_data)
-        if self.save_conversion:
+        if self.save_conversion and not os.path.exists(fname):
             traj.save(fname)
 
