@@ -4,7 +4,6 @@ import numpy as np
 from biosimulators_utils.config import Config
 from biosimulators_utils.report.io import ReportFormat
 from simulariumio.data_objects import TrajectoryData, AgentData, MetaData, CameraData, ModelMetaData
-
 from sim_pipe.data_generators.smoldyn_data_generator import SmoldynDataGenerator
 
 
