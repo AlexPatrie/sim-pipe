@@ -1,1 +1,1 @@
-# biosimulators_simularium
+# SimPipe
