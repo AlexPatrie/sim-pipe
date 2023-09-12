@@ -67,7 +67,8 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
         agents = df.values
         box_size = 100
         n_seconds = 100
-        total_steps = 5001
+        #total_steps = 5001
+        total_steps = 100
         timestep = n_seconds / total_steps
         '''n_agents = []
         for t in range(total_steps):
@@ -77,7 +78,6 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
         type_names = []
         for t in range(total_steps):
             type_names.append(list(set([df.columns.tolist()[i] for i in range(n_agents)])))
-        print(f'Names: {type_names[0]}')
         min_radius = 5
         max_radius = 10
         sim_display_data = self.generate_display_data(type_names=type_names)
@@ -113,12 +113,7 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
                 types=type_names,
                 positions=np.random.uniform(size=(total_steps, n_agents, 3)) * box_size - box_size * 0.5,
                 radii=(max_radius - min_radius) * np.random.uniform(size=(total_steps, n_agents)) + min_radius,
-                display_data={
-                    type_names[0][0]: DisplayData(
-                        name="Molecule A",
-                        display_type=DISPLAY_TYPE.SPHERE,
-                    ),
-                },
+                display_data=sim_display_data
             )
         )
 
@@ -127,11 +122,12 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
         display_data = {}
         for i in range(len(type_names[0])):
             name = type_names[0][i]
-            print(f'NAME: {name}')
-            display_data[name] = DisplayData(
-                name=name,
-                display_type=DISPLAY_TYPE.SPHERE_GROUP,
-            )
+            if "in" not in name:
+                display_data[name] = DisplayData(
+                    name=name,
+                    display_type=DISPLAY_TYPE.PDB,
+                )
+                print(f'NAME: {name}')
         return display_data
 
     def convert(self, traj_data: TrajectoryData, fname: str) -> None:
