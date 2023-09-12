@@ -3,7 +3,6 @@ from datetime import datetime
 import numpy as np
 from biosimulators_utils.config import Config
 from biosimulators_utils.report.io import ReportFormat
-from simulariumio.data_objects import TrajectoryData, AgentData, MetaData, CameraData, ModelMetaData
 from sim_pipe.data_generators.smoldyn_data_generator import SmoldynDataGenerator
 
 
@@ -23,7 +22,8 @@ def main():
     project_root = os.getcwd()
     outputs_dirname = 'test_simulation_outputs'
     root_output_dir = os.path.join(project_root, outputs_dirname)
-    run_id = get_run_id(root_output_dir)
+    # run_id = get_run_id(root_output_dir)
+    run_id = str(datetime.today().minute) + '_' + str(datetime.today().second)
     output_dir = os.path.join(root_output_dir, run_id)
 
     conf = Config(REPORT_FORMATS=[ReportFormat.csv])
@@ -33,6 +33,8 @@ def main():
         output_dir=output_dir,
         config=conf
     )
+
+    print(generator.df)
 
     trajectory_title = "Andrews_ecoli_trajectory"
     sim_trajectory = generator.generate_trajectory_object(title=trajectory_title)
