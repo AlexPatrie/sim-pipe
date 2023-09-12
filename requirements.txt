@@ -1,0 +1,3 @@
+zarr 
+biosimulators-utils
+simulariumio[tutorial]
