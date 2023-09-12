@@ -1,3 +1,5 @@
 zarr 
 biosimulators-utils
 simulariumio[tutorial]
+tellurium
+
