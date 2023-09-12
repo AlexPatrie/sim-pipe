@@ -8,11 +8,12 @@ from simulariumio.data_objects import TrajectoryData, AgentData, MetaData, Camer
 from sim_pipe.data_generators.smoldyn_data_generator import SmoldynDataGenerator
 
 
-def __run_id(fp: str) -> int:
+def GET_RUN_ID(fp: str) -> str:
     i = 0
-    if os.path.exists(os.path.join(fp, str(i))):
-        i += 1
-    return i
+    files = os.listdir(fp)
+    if str(i) in files:
+         i = int(files[-1]) + 1
+    return str(i)
 
 
 def main():
