@@ -18,10 +18,11 @@ def GET_RUN_ID(fp: str) -> str:
 def main():
     if os.path.exists('biosimulators_Andrews_ecoli.simularium'):
         os.remove('biosimulators_Andrews_ecoli.simularium')
-    run_id = str(datetime.today().minute) + '_' + str(datetime.today().second)
+    #run_id = str(datetime.today().minute) + '_' + str(datetime.today().second)
     archive = 'sim_pipe/files/archives/Andrews_ecoli_0523.omex'
     project_root = os.getcwd()
     root_output_dir = os.path.join(project_root, 'test_simulation_outputs')
+    run_id = GET_RUN_ID(root_output_dir)
     output_dir = os.path.join(root_output_dir, run_id)
 
     conf = Config(REPORT_FORMATS=[ReportFormat.csv])
