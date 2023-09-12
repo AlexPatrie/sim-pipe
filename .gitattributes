@@ -1,0 +1,5 @@
+*.nb linguist-detectable=false
+*.whl linguist-detectable=false
+smoldyn-2.72-mac linguist-detectable=false
+smoldyn-2.72-mac-Intel linguist-detectable=false
+
