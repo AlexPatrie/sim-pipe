@@ -1,3 +1,5 @@
+from string import ascii_uppercase
+from random import choice
 from typing import Tuple, Dict, List, Optional
 import os
 import zarr
@@ -61,15 +63,25 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
 
     def generate_trajectory_object(self, title: str, df: Optional[pd.DataFrame] = None) -> TrajectoryData:
         df = df or self.df
-        print(df)
         timestamps = df.pop('Time').values
         agents = df.values
         box_size = 100
-        total_steps = 100
-        n_agents = agents.shape[1]
-        type_names = df.columns
+        n_seconds = 100
+        total_steps = 5001
+        timestep = n_seconds / total_steps
+        '''n_agents = []
+        for t in range(total_steps):
+            n_agents.append(agents.shape[1])'''
+        n_agents = 12
+        #type_names = np.array([df.columns.tolist() for n in range(len(df.columns))])
+        type_names = []
+        for t in range(total_steps):
+            type_names.append(list(set([df.columns.tolist()[i] for i in range(n_agents)])))
         min_radius = 5
         max_radius = 10
+        sim_display_data = self.generate_display_data(type_names=type_names)
+        print(sim_display_data)
+
         return TrajectoryData(
             meta_data=MetaData(
                 box_size=np.array([box_size, box_size, box_size]),
@@ -94,15 +106,34 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
                 ),
             ),
             agent_data=AgentData(
-                times=timestamps,
+                times=timestep * np.array(list(range(total_steps))),
                 n_agents=np.array(total_steps * [n_agents]),
                 viz_types=np.array(total_steps * [n_agents * [1000.0]]),  # default viz type = 1000
                 unique_ids=np.array(total_steps * [list(range(n_agents))]),
                 types=type_names,
                 positions=np.random.uniform(size=(total_steps, n_agents, 3)) * box_size - box_size * 0.5,
-                radii=(max_radius - min_radius) * np.random.uniform(size=(total_steps, n_agents)) + min_radius
+                radii=(max_radius - min_radius) * np.random.uniform(size=(total_steps, n_agents)) + min_radius,
+                display_data={
+                    type_names[0][0][0]: DisplayData(
+                        name="Molecule A",
+                        display_type=DISPLAY_TYPE.SPHERE,
+                    ),
+                },
             )
         )
+
+    @staticmethod
+    def generate_display_data(type_names: List[List[str]]) -> Dict[str, DisplayData]:
+        display_data = {}
+        for i in range(len(type_names[0])):
+            name = type_names[0][i]
+            for n in name:
+                print(f'the name: {n}')
+                display_data[n] = DisplayData(
+                    name=n,
+                    display_type=DISPLAY_TYPE.SPHERE,
+                )
+        return display_data
 
     def convert(self, traj_data: TrajectoryData, fname: str) -> None:
         """

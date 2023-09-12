@@ -1,6 +1,6 @@
-duration: 6.473739
+duration: 6.509846
 exception: null
-output: "/Users/alex/anaconda3/envs/sim-pipe/lib/python3.10/site-packages/biosimulators_utils/warnings.py:31:\
+output: "/Users/alex/anaconda3/envs/sim-pipe-env/lib/python3.10/site-packages/biosimulators_utils/warnings.py:31:\
   \ BioSimulatorsWarning: COMBINE/OMEX archive has warnings.\n  - The manifest does\
   \ not include its parent COMBINE/OMEX archive. Manifests should include their parent\
   \ COMBINE/OMEX archives.\n  warnings.warn(termcolor.colored(message, Colors.warning.value),\
@@ -12,7 +12,7 @@ output: "/Users/alex/anaconda3/envs/sim-pipe/lib/python3.10/site-packages/biosim
   \ 0\n    Failed: 0\n  Tasks (1):\n    Succeeded: 1\n    Skipped: 0\n    Failed:\
   \ 0\n  Outputs (1):\n    Succeeded: 1\n    Skipped: 0\n    Failed: 0\n\n"
 sedDocuments:
-- duration: 6.345023
+- duration: 6.371991
   exception: null
   location: simulation.sedml
   output: "  Found 1 tasks and 1 outputs:\n    Tasks:\n      `task`\n    Outputs:\n\
@@ -49,10 +49,10 @@ sedDocuments:
       status: SUCCEEDED
     - id: count_species_MinE_surface_membrane
       status: SUCCEEDED
-    duration: 0.124678
+    duration: 0.126803
     exception: null
     id: report
-    output: "/Users/alex/anaconda3/envs/sim-pipe/lib/python3.10/site-packages/biosimulators_utils/warnings.py:31:\
+    output: "/Users/alex/anaconda3/envs/sim-pipe-env/lib/python3.10/site-packages/biosimulators_utils/warnings.py:31:\
       \ MissingReportMetadataWarning: Reports exported to CSV do not contain information\
       \ about the data type or size of each data set.\n  warnings.warn(termcolor.colored(message,\
       \ Colors.warning.value), category)\n"
@@ -62,7 +62,7 @@ sedDocuments:
   status: SUCCEEDED
   tasks:
   - algorithm: KISAO_0000057
-    duration: 6.198833
+    duration: 6.223651
     exception: null
     id: task
     output: ''
