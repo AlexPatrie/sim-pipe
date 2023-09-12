@@ -140,3 +140,9 @@ class SmoldynDataGenerator(BiosimulatorsDataGenerator):
         if self.save_conversion and not os.path.exists(fname):
             traj.save(fname)
 
+    @staticmethod
+    def prepare_simularium_fp(simularium_dirpath: str, simularium_fname: str) -> str:
+        if not os.path.exists(simularium_dirpath):
+            os.mkdir(simularium_dirpath)
+        return os.path.join(simularium_dirpath, simularium_fname)
+
