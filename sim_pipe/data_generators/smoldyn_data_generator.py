@@ -29,18 +29,26 @@ from simulariumio import (
 from biosimulators_utils.report.io import ReportFormat
 
 
-class SmoldynDataGenerator:
+class SmoldynDataOutput:
+    def __init__(self, output_dirpath: Optional[str] = None):
+        self.output_dirpath = output_dirpath or os.path.dirname(os.path.abspath(__file__))
+
+
+class SmoldynDataGenerator(SmoldynDataOutput):
     def __init__(self,
-                 output_dirpath: str,
+                 output_dirpath: Optional[str] = None,
                  config: Optional[Config] = None):
-        self.output_dirpath = output_dirpath
+        super().__init__(output_dirpath)
         self.config = config or get_config()
         self.config.LOG_PATH = self.output_dirpath
         self.config.REPORT_FORMATS = [ReportFormat.csv]
 
     @staticmethod
-    def run_simulation_from_smoldyn_file(model_fp: str) -> None:
-        simulator = bioSim.combine.init_smoldyn_simulation_from_configuration_file(model_fp)
+    def generate_simulation_object_from_configuration_file(model_fp: str) -> Simulation:
+        return bioSim.combine.init_smoldyn_simulation_from_configuration_file(model_fp)
+
+    def run_simulation_from_smoldyn_file(self, model_fp: str) -> None:
+        simulator = self.generate_simulation_object_from_configuration_file(model_fp)
         return simulator.runSim()
 
     def run_simulation_from_archive(self, archive_fp: str) -> Tuple:
@@ -62,6 +70,11 @@ class SmoldynDataGenerator:
                         config=self.config
                     )
 
+
+class SmoldynDataConverter(SmoldynDataOutput):
+    def __init__(self, output_dirpath: Optional[str] = None):
+        super().__init__(output_dirpath)
+
     @staticmethod
     def prepare_simularium_fp(simularium_dirpath: str, simularium_fname: str) -> str:
         if not os.path.exists(simularium_dirpath):
@@ -75,13 +88,15 @@ class SmoldynDataGenerator:
     @staticmethod
     def prepare_smoldyn_data_for_conversion(
             file_data: InputFileData,
+            display_data: Optional[DisplayData] = None,
             spatial_units="nm",
-            temporal_units="ns"
-    ) -> SmoldynData:
+            temporal_units="ns",
+            ) -> SmoldynData:
         return SmoldynData(
             smoldyn_file=file_data,
             spatial_units=UnitData(spatial_units),
             time_units=UnitData(temporal_units),
+            display_data=display_data,
         )
 
     @staticmethod
@@ -95,11 +110,11 @@ class SmoldynDataGenerator:
             ),
         ])
 
-    @staticmethod
-    def convert_to_simularium(data, simularium_filename: str):
+    def convert_to_simularium(self, data, simularium_filename: str) -> None:
+        fp = os.path.join(self.output_dirpath, simularium_filename)
         BinaryWriter.save(
             data,
-            simularium_filename,
+            fp,
             validate_ids=False
         )
 
@@ -108,10 +123,18 @@ class SmoldynDataGenerator:
             file_data_path: str,
             simularium_filename: str,
             box_size: float,
-            n_dim=3
-            ):
+            spatial_units="nm",
+            temporal_units="ns",
+            n_dim=3,
+            display_data: Optional[Dict[str, DisplayData]] = None
+            ) -> None:
         input_file = self.prepare_input_file_data(file_data_path)
-        data = self.prepare_smoldyn_data_for_conversion(input_file)
+        data = self.prepare_smoldyn_data_for_conversion(
+            file_data=input_file,
+            display_data=display_data,
+            spatial_units=spatial_units,
+            temporal_units=temporal_units
+        )
         translated = self.translate_data(data, box_size, n_dim)
         self.convert_to_simularium(translated, simularium_filename)
         print('New Simularium file generated!!')
@@ -124,32 +147,42 @@ class SmoldynDataGenerator:
     def generate_display_data_object(
             name: str,
             radius: float,
-            display_type=DISPLAY_TYPE.OBJ
+            display_type=DISPLAY_TYPE.SPHERE,
+            obj_color: Optional[str] = None,
             ) -> DisplayData:
         return DisplayData(
                     name=name,
                     radius=radius,
-                    display_type=display_type
+                    display_type=display_type,
+                    color=obj_color
                     )
 
-    def generate_display_data_object_dict(self, agent_names: List[Tuple[str, str, float]]) -> Dict[str, DisplayData]:
+    def generate_display_data_object_dict(
+            self,
+            agent_names: List[Tuple[str, str, float, str]]) -> Dict[str, DisplayData]:
         """
         Params:
         -------
         agent_names: `List[Tuple[str, str, float]]` -> a list of tuples defining the Display Data configuration parameters.\n
-        The Tuple is expected to be as such: [(`agent_name: str`, `display_name: str`, `radius: float`)]
+        The Tuple is expected to be as such: [(`agent_name: str`, `display_name: str`, `radius: float`, `color`: `str`)]
 
+        Returns:
+        ________
+        `Dict[str, DisplayData]`
         """
         data = {}
         for name in agent_names:
-            data[name[0]] = self.generate_display_data_object(name[1], name[2])
+            data[name[0]] = self.generate_display_data_object(
+                name=name[0],
+                radius=name[2],
+                obj_color=name[3]
+            )
         return data
 
 
-class SimulationSetup(str, Enum):
+class SimulationSetupParams(str, Enum):
     project_root = 'sim_pipe'
     model_fp = 'sim_pipe/files/models/ecoli_model.txt'
     ecoli_archive_dirpath = 'sim_pipe/files/archives/Andrews_ecoli_0523'
     sed_doc = os.path.join(ecoli_archive_dirpath, 'simulation.sedml')
     outputs_dirpath = 'sim_pipe/outputs'
-
