@@ -31,7 +31,11 @@ from biosimulators_utils.report.io import ReportFormat
 
 class SmoldynDataOutput:
     def __init__(self, output_dirpath: Optional[str] = None):
-        self.output_dirpath = output_dirpath or os.path.dirname(os.path.abspath(__file__))
+        self.output_dirpath = output_dirpath or os.path.dirname(
+            os.path.dirname(
+                os.path.abspath(__file__)
+            )
+        )
 
 
 class SmoldynDataGenerator(SmoldynDataOutput):
@@ -88,7 +92,7 @@ class SmoldynDataConverter(SmoldynDataOutput):
     @staticmethod
     def prepare_smoldyn_data_for_conversion(
             file_data: InputFileData,
-            display_data: Optional[DisplayData] = None,
+            display_data: Optional[Dict[str, DisplayData]] = None,
             spatial_units="nm",
             temporal_units="ns",
             ) -> SmoldynData:
@@ -147,7 +151,7 @@ class SmoldynDataConverter(SmoldynDataOutput):
     def generate_display_data_object(
             name: str,
             radius: float,
-            display_type=DISPLAY_TYPE.SPHERE,
+            display_type=DISPLAY_TYPE.PDB,
             obj_color: Optional[str] = None,
             ) -> DisplayData:
         return DisplayData(
