@@ -109,7 +109,7 @@ class SmoldynDataGenerator:
             simularium_filename: str,
             box_size: float,
             n_dim=3
-        ):
+            ):
         input_file = self.prepare_input_file_data(file_data_path)
         data = self.prepare_smoldyn_data_for_conversion(input_file)
         translated = self.translate_data(data, box_size, n_dim)
@@ -120,7 +120,30 @@ class SmoldynDataGenerator:
     def prepare_agent_data():
         pass
 
-    def prepare_display_data(self):
+    @staticmethod
+    def generate_display_data_object(
+            name: str,
+            radius: float,
+            display_type=DISPLAY_TYPE.OBJ
+            ) -> DisplayData:
+        return DisplayData(
+                    name=name,
+                    radius=radius,
+                    display_type=display_type
+                    )
+
+    def generate_display_data_object_dict(self, agent_names: List[Tuple[str, str, float]]) -> Dict[str, DisplayData]:
+        """
+        Params:
+        -------
+        agent_names: `List[Tuple[str, str, float]]` -> a list of tuples defining the Display Data configuration parameters.\n
+        The Tuple is expected to be as such: [(`agent_name: str`, `display_name: str`, `radius: float`)]
+
+        """
+        data = {}
+        for name in agent_names:
+            data[name[0]] = self.generate_display_data_object(name[1], name[2])
+        return data
 
 
 class SimulationSetup(str, Enum):

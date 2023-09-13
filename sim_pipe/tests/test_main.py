@@ -15,3 +15,4 @@ generator.run_simulation_from_smoldyn_file(MODEL_FP)
 
 generator.generate_simularium_file(MODEL_OUTPUT_FP, SIMULARIUM_FILENAME, BOX_SIZE, N_DIM)
 
+NOW USE THE GENERATE DISPLAY DATA METHOD!
